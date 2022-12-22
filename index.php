@@ -1,65 +1,68 @@
 <?php
-
-include 'database_connection.php';
-include 'function.php';
-
-if(is_user_login())
-{
-	header('location:issue_book_details.php');
-}
-
-include 'header.php';
-
-
-
+	require "../db_connect.php";
+	require "../message_display.php";
+	require "../verify_logged_out.php";
+	require "../header.php";
 ?>
 
-<div class="p-5 mb-4 bg-light rounded-5">
+<html>
+	<head>
+		<title>LMS</title>
+		<link rel="stylesheet" type="text/css" href="../css/global_styles.css">
+		<link rel="stylesheet" type="text/css" href="../css/form_styles.css">
+		<link rel="stylesheet" type="text/css" href="css/index_style.css">
+	</head>
+	<body>
+		<form class="cd-form" method="POST" action="#">
+		
+		<center><legend>Member Login</legend></center>
+			
+			<div class="error-message" id="error-message">
+				<p id="error"></p>
+			</div>
+			
+			<div class="icon">
+				<input class="m-user" type="text" name="m_user" placeholder="Username" required />
+			</div>
+			
+			<div class="icon">
+				<input class="m-pass" type="password" name="m_pass" placeholder="Password" required />
+			</div>
+			
+			<input type="submit" value="Login" name="m_login" />
+			
+			<br /><br /><br /><br />
+			
+			<p align="center">Don't have an account?&nbsp;<a href="register.php" style="text-decoration:none; color:red;">Register Now!</a>
 
-	<div class="container-fluid py-5">
-
-		<h1 class="display-5 fw-bold">Library Management System</h1>
-
-		<p class="text-info"> This site has all the features that a library admin and a user needs. </p>
-
-	</div>
-
-</div>
-
-<div class="row align-items-md-stretch">
-
-	<div class="col-md-6">
-
-		<div class="h-100 p-5 text-white bg-dark rounded-3">
-
-			<h2>Admin Login</h2>
-			<p></p>
-			<a href="admin_login.php" class="btn btn-outline-light">Admin Login</a>
-
-		</div>
-
-	</div>
-
-	<div class="col-md-6">
-
-		<div class="h-100 p-5 bg-light border rounded-3">
-
-			<h3>User Login</h3>
-
-			<p></p>
-
-			<a href="user_login.php" class="btn btn-outline-secondary">User Login</a>
-
-			<a href="user_registration.php" class="btn btn-outline-primary">User Sign Up</a>
-
-		</div>
-
-	</div>
-
-</div>
-
-<?php
-
-include 'footer.php';
-
-?>
+			<p align="center"><a href="../index.php" style="text-decoration:none;">Go Back</a>
+		</form>
+	</body>
+	
+	<?php
+		if(isset($_POST['m_login']))
+		{
+			$query = $con->prepare("SELECT id, balance FROM member WHERE username = ? AND password = ?;");
+			$query->bind_param("ss", $_POST['m_user'], sha1($_POST['m_pass']));
+			$query->execute();
+			$result = $query->get_result();
+			
+			if(mysqli_num_rows($result) != 1)
+				echo error_without_field("Invalid details or Account has not been activated yet!");
+			else 
+			{
+				$resultRow = mysqli_fetch_array($result);
+				$balance = $resultRow[1];
+			if($balance < 0){
+				echo error_without_field("Your account has been suspended. Please contact librarian for further information!");
+			} else {
+					$_SESSION['type'] = "member";
+					$_SESSION['id'] = $resultRow[0];
+					$_SESSION['username'] = $_POST['m_user'];
+					header('Location: home.php');
+				}
+			}
+		}
+	?>
+	
+</html>
