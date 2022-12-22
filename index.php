@@ -1,65 +1,58 @@
 <?php
-
-include 'database_connection.php';
-include 'function.php';
-
-if(is_user_login())
-{
-	header('location:issue_book_details.php');
-}
-
-include 'header.php';
-
-
-
+	require "../db_connect.php";
+	require "../message_display.php";
+	require "../verify_logged_out.php";
+	require "../header.php";
 ?>
 
-<div class="p-5 mb-4 bg-light rounded-5">
+<html>
+	<head>
+		<title>LMS</title>
+		<link rel="stylesheet" type="text/css" href="../css/global_styles.css">
+		<link rel="stylesheet" type="text/css" href="../css/form_styles.css">
+		<link rel="stylesheet" type="text/css" href="css/index_style.css">
+	</head>
+	<body>
+		<form class="cd-form" method="POST" action="#">
+		
+		<center><legend>Librarian Login</legend></center>
 
-	<div class="container-fluid py-5">
+			<div class="error-message" id="error-message">
+				<p id="error"></p>
+			</div>
+			
+			<div class="icon">
+				<input class="l-user" type="text" name="l_user" placeholder="Username" required />
+			</div>
+			
+			<div class="icon">
+				<input class="l-pass" type="password" name="l_pass" placeholder="Password" required />
+			</div>
+			
+			<input type="submit" value="Login" name="l_login"/>
 
-		<h1 class="display-5 fw-bold">Library Management System</h1>
-
-		<p class="text-info"> This site has all the features that a library admin and a user needs. </p>
-
-	</div>
-
-</div>
-
-<div class="row align-items-md-stretch">
-
-	<div class="col-md-6">
-
-		<div class="h-100 p-5 text-white bg-dark rounded-3">
-
-			<h2>Admin Login</h2>
-			<p></p>
-			<a href="admin_login.php" class="btn btn-outline-light">Admin Login</a>
-
-		</div>
-
-	</div>
-
-	<div class="col-md-6">
-
-		<div class="h-100 p-5 bg-light border rounded-3">
-
-			<h3>User Login</h3>
-
-			<p></p>
-
-			<a href="user_login.php" class="btn btn-outline-secondary">User Login</a>
-
-			<a href="user_registration.php" class="btn btn-outline-primary">User Sign Up</a>
-
-		</div>
-
-	</div>
-
-</div>
-
-<?php
-
-include 'footer.php';
-
-?>
+			
+			
+		</form>
+		<p align="center"><a href="../index.php" style="text-decoration:none;">Go Back</a>
+	</body>
+	
+	<?php
+		if(isset($_POST['l_login']))
+		{
+			$query = $con->prepare("SELECT id FROM librarian WHERE username = ? AND password = ?;");
+			$query->bind_param("ss", $_POST['l_user'], sha1($_POST['l_pass']));
+			$query->execute();
+			if(mysqli_num_rows($query->get_result()) != 1)
+				echo error_without_field("Invalid username/password combination");
+			else
+			{
+				$_SESSION['type'] = "librarian";
+				$_SESSION['id'] = mysqli_fetch_array($result)[0];
+				$_SESSION['username'] = $_POST['l_user'];
+				header('Location: home.php');
+			}
+		}
+	?>
+	
+</html>
