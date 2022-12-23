@@ -1,16 +1,38 @@
-/*----------Custom Icons----------*/
-.cd-form .icon input{
-  padding-left: 54px !important;
+#allTheThings {
+  width: 90%;
+  max-width: 800px;
+  text-align: center;
+  margin: 8em auto;
+  font-size: 1.3rem;
+  color: #94aab0;
+  display: block;
 }
-.cd-form .l-user {
-  background: url("../img/ic_book_author.svg") no-repeat 16px center;
+
+a{
+	color: #94aab0;
+	text-decoration: none;
 }
-.cd-form [required].l-user {
-  background: url("../img/ic_book_author.svg") no-repeat 16px center, url("../img/ic_required.svg") no-repeat top right;
+
+#member{
+	display: inline-block;
 }
-.cd-form .l-pass {
-  background: url("../../member/img/ic_member_username.svg") no-repeat 16px center;
+
+#verticalLine {
+	display: inline-block;
+	margin-left: 20px;
+    border-left: solid #343642;
 }
-.cd-form [required].l-pass {
-  background: url("../../member/img/ic_member_pass.svg") no-repeat 16px center, url("../img/ic_required.svg") no-repeat top right;
+
+#librarian-link{
+	margin-left: 20px;
+}
+
+#member, #librarian
+{
+	transition: all .2s ease-in-out;
+}
+
+#member:hover, #librarian:hover
+{
+	transform: scale(1.1);
 }
