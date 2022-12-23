@@ -1,58 +1,36 @@
 <?php
-	require "../db_connect.php";
-	require "../message_display.php";
-	require "../verify_logged_out.php";
-	require "../header.php";
+	require "db_connect.php";
+	require "header.php";
+	session_start();
+	
+	if(empty($_SESSION['type']));
+	else if(strcmp($_SESSION['type'], "librarian") == 0)
+		header("Location: librarian/home.php");
+	else if(strcmp($_SESSION['type'], "member") == 0)
+		header("Location: member/home.php");
 ?>
 
 <html>
 	<head>
 		<title>LMS</title>
-		<link rel="stylesheet" type="text/css" href="../css/global_styles.css">
-		<link rel="stylesheet" type="text/css" href="../css/form_styles.css">
-		<link rel="stylesheet" type="text/css" href="css/index_style.css">
+		<link rel="stylesheet" type="text/css" href="css/index_style.css" />
 	</head>
 	<body>
-		<form class="cd-form" method="POST" action="#">
-		
-		<center><legend>Librarian Login</legend></center>
-
-			<div class="error-message" id="error-message">
-				<p id="error"></p>
+		<div id="allTheThings">
+			<div id="member">
+				<a href="member">
+					<img src="img/ic_membership.svg" width="250px" height="auto"/><br />
+					&nbsp;Member Login
+				</a>
 			</div>
-			
-			<div class="icon">
-				<input class="l-user" type="text" name="l_user" placeholder="Username" required />
+			<div id="verticalLine">
+				<div id="librarian">
+					<a id="librarian-link" href="librarian">
+						<img src="img/ic_librarian2.svg" width="250px" height="220" /><br />
+						&nbsp;&nbsp;&nbsp;Librarian Login
+					</a>
+				</div>
 			</div>
-			
-			<div class="icon">
-				<input class="l-pass" type="password" name="l_pass" placeholder="Password" required />
-			</div>
-			
-			<input type="submit" value="Login" name="l_login"/>
-
-			
-			
-		</form>
-		<p align="center"><a href="../index.php" style="text-decoration:none;">Go Back</a>
+		</div>
 	</body>
-	
-	<?php
-		if(isset($_POST['l_login']))
-		{
-			$query = $con->prepare("SELECT id FROM librarian WHERE username = ? AND password = ?;");
-			$query->bind_param("ss", $_POST['l_user'], sha1($_POST['l_pass']));
-			$query->execute();
-			if(mysqli_num_rows($query->get_result()) != 1)
-				echo error_without_field("Invalid username/password combination");
-			else
-			{
-				$_SESSION['type'] = "librarian";
-				$_SESSION['id'] = mysqli_fetch_array($result)[0];
-				$_SESSION['username'] = $_POST['l_user'];
-				header('Location: home.php');
-			}
-		}
-	?>
-	
 </html>
